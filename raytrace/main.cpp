@@ -1,5 +1,6 @@
 #include "OpenGP/Image/Image.h"
 #include "bmpwrite.h"
+#include "Eigen/src/Core/Matrix.h"
 
 #include "camera.h"
 #include "light.h"
@@ -18,6 +19,7 @@ void processRay(int row, int column, const Vec3& e, const Vec3& d);
 
 // Static objects
 Image<Colour> image;
+Eigen::MatrixXf imageDistances;
 Colour background;
 Camera camera;
 
@@ -32,6 +34,10 @@ int main(int, char**){
 	background = white();
 
 	image = Image<Colour>(hResolution, wResolution);
+	image.setConstant(background);
+
+	imageDistances = Eigen::MatrixXf(hResolution, wResolution);
+	imageDistances.setConstant(std::numeric_limits<float>::infinity());
 	
     camera = Camera(
 		Vec3(0.0f, 0.0f, -10.0f), 
@@ -81,11 +87,15 @@ void processRay(int row, int column, const Vec3 &e, const Vec3 &d) {
 		bool hit = renderizable->intersect(e, d, intersection, normal);
 
 		if (hit) {
-			Colour colour = renderizable->getHitColour(lights, e, d, intersection, normal);
-			image(row, column) = colour;
-		}
-		else {
-			image(row, column) = background;
+			float distance = (e - intersection).norm();
+
+			if (imageDistances(row, column) > distance) {
+				
+				Colour colour = renderizable->getHitColour(lights, e, d, intersection, normal);
+				image(row, column) = colour;
+
+				imageDistances(row, column) = distance;
+			}
 		}
 	}
 }
