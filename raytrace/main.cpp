@@ -5,6 +5,7 @@
 #include "light.h"
 #include "renderizable/renderizable.h"
 #include "renderizable/sphere.h"
+#include "renderizable/plane.h"
 
 using namespace OpenGP;
 
@@ -44,6 +45,14 @@ int main(int, char**){
 		new Sphere(
 			Vec3(0.0f, 0.0f, 20.0f),
 			2.0f,
+			Material(red())
+		)
+	);
+
+	renderizables.push_back(
+		new Plane(
+			Vec3(0.0f, 1.0f, 0.0f),
+			-5.0f,
 			Material(red())
 		)
 	);

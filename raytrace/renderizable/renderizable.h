@@ -1,5 +1,5 @@
-#ifndef INTERSECTABLE_H
-#define INTERSECTABLE_H
+#ifndef RENDERIZABLE_H
+#define RENDERIZABLE_H
 
 #include "OpenGP/types.h"
 using namespace OpenGP;
@@ -26,4 +26,4 @@ public:
 	Renderizable(Material material);
 };
 
-#endif // INTERSECTABLE_H
+#endif // RENDERIZABLE_H
