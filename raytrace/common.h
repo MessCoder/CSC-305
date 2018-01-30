@@ -16,6 +16,7 @@ using Colour = Vec3; // RGB Value
 
 using Image = OpenGP::Image<Colour>;
 
-#define DEFAULT_BIAS 0.5f
+#define DEFAULT_BIAS 0.01f
+#define RAYTRACING_MAX_DEPTH 5
 
 #endif // COMMON_H

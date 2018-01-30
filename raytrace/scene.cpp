@@ -29,7 +29,7 @@ Renderizable* Scene::castRay(Ray& ray, float bias) {
 	return closestHitRenderizable;
 }
 
-Colour Scene::getHitColour(Ray& ray, float bias) {
+Colour Scene::getHitColour(Ray& ray, float bias, int depth) {
 	
 	Renderizable* renderizable = castRay(ray, bias);
 
@@ -37,6 +37,7 @@ Colour Scene::getHitColour(Ray& ray, float bias) {
 		return this->background;
 	}
 	else {
-		return renderizable->getHitColour(*this, ray);
+		depth++;
+		return renderizable->getHitColour(*this, ray, depth);
 	}
 }

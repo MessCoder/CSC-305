@@ -26,8 +26,8 @@ Scene buildScene() {
 	renderizables.push_back(
 		new Sphere(
 			Vec3(1.0f, 1.0f, 25.0f),
-			1.5f,
-			Material(Vec3(0.8f, 0.8f, 0.0f))
+			1.0f,
+			Material(Vec3(0.8f, 0.8f, 0.8f))
 		)
 	);
 
@@ -38,6 +38,15 @@ Scene buildScene() {
 			Material(Vec3(0.0f, 0.0f, 1.0f))
 		)
 	);
+	
+	renderizables.push_back(
+		new Plane(
+			Vec3(0.0f, 0.0f, -1.0f),
+			-60.0f,
+			Material(Vec3(0.0f, 0.7f, 1.0f), 0.9f)
+		)
+	);
+	
 
 	/* Backwards raytracing sphere troubleshooting
 	renderizables.push_back(
@@ -51,7 +60,7 @@ Scene buildScene() {
 
 	lights.push_back(
 		Light(
-			Vec3(10.0f, 4.0f, 25.0f),
+			Vec3(10.0f, 4.0f, 22.0f),
 			1.0f
 		)
 	);
@@ -77,8 +86,8 @@ int main(int, char**){
 		Vec3(0.0f, 0.0f, 1.0f),
 		Vec3(0.0f, 1.0f, 0.0f),
 		10.0f,
-		150 * 9 / 16,
-		150);
+		800 * 9 / 16,
+		800);
 
 	Image image = camera.render(scene);
 

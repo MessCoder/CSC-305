@@ -29,7 +29,7 @@ public:
 	// and returns the perceived colour.
 	//
 	// The bias parameter defines the minimum distance at which a hit will be considered.
-	Colour getHitColour(Ray& ray, float bias = DEFAULT_BIAS);
+	Colour getHitColour(Ray& ray, float bias = DEFAULT_BIAS, int depth = 0);
 };
 
 #include "renderizable/renderizable.h"

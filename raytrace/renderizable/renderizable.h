@@ -22,7 +22,7 @@ public:
 	// d = ray direction
 	// i = intersection
 	// n = normal
-	Colour getHitColour(Scene& scene, Ray& ray, float bias = DEFAULT_BIAS) const;
+	Colour getHitColour(Scene& scene, Ray& ray, float bias = DEFAULT_BIAS, int depth = 0) const;
 
 	Renderizable(Material material);
 };
