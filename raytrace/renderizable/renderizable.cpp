@@ -3,6 +3,11 @@
 Renderizable::Renderizable(Material material) : material(material) {
 }
 
-Colour Renderizable::getHitColour(std::vector<Light> lights, const Vec3& e, const Vec3& d, const Vec3& i, const Vec3& n) const {
-	return material.getHitColour(lights, e, d, i, n);
+Colour Renderizable::getHitColour(Scene& scene, Ray& ray) const {
+	
+	if (!ray.hit) {
+		throw std::invalid_argument("Can't get the hit colour of a ray that hasn't hit anything");
+	}
+
+	return material.getHitColour(scene, ray);
 }

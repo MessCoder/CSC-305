@@ -1,57 +1,25 @@
-#include "OpenGP/Image/Image.h"
+#include "common.h"
 #include "bmpwrite.h"
-#include "Eigen/src/Core/Matrix.h"
 
 #include "camera.h"
 #include "light.h"
+#include "scene.h"
+
 #include "renderizable/renderizable.h"
 #include "renderizable/sphere.h"
 #include "renderizable/plane.h"
 
-using namespace OpenGP;
-
-using Colour = Vec3; // RGB Value
-Colour red() { return Colour(1.0f, 0.0f, 0.0f); }
-Colour white() { return Colour(1.0f, 1.0f, 1.0f); }
-Colour black() { return Colour(0.0f, 0.0f, 0.0f); }
-
-void processRay(int row, int column, const Vec3& e, const Vec3& d);
-
-// Static objects
-Image<Colour> image;
-Eigen::MatrixXf imageDistances;
-Colour background;
-Camera camera;
-
-std::vector<Light> lights;
-std::vector<Renderizable*> renderizables;
-
-int main(int, char**){
-
-    int wResolution = 500;
-    int hResolution = 300;
-
-	background = white();
-
-	image = Image<Colour>(hResolution, wResolution);
-	image.setConstant(background);
-
-	imageDistances = Eigen::MatrixXf(hResolution, wResolution);
-	imageDistances.setConstant(std::numeric_limits<float>::infinity());
+Scene buildScene() {
+	Colour background = WHITE;
 	
-    camera = Camera(
-		Vec3(0.0f, 0.0f, -10.0f), 
-		Vec3(0.0f, 0.0f, 1.0f),
-		Vec3(0.0f, 1.0f, 0.0f),
-		10.0f,
-		wResolution,
-		hResolution);
+	auto renderizables = std::vector<Renderizable*>();
+	auto lights = std::vector<Light>();
 
 	renderizables.push_back(
 		new Sphere(
 			Vec3(0.0f, 0.0f, 20.0f),
 			2.0f,
-			Material(red())
+			Material(Vec3(0.8f, 0.8f, 0.0f))
 		)
 	);
 
@@ -59,43 +27,43 @@ int main(int, char**){
 		new Plane(
 			Vec3(0.0f, 1.0f, 0.0f),
 			-5.0f,
-			Material(red())
+			Material(Vec3(0.0f, 0.0f, 1.0f))
 		)
 	);
 
-    lights.push_back(
-        Light(
-			Vec3(5.0f, 5.0f, 12.0f), 
+	lights.push_back(
+		Light(
+			Vec3(5.0f, 5.0f, 12.0f),
 			1.0f
 		)
-    );
+	);
 
-    camera.forEachRay(processRay);
+	lights.push_back(
+		Light(
+			Vec3(-5.0f, 5.0f, 12.0f),
+			0.4f
+		)
+	);
 
-    bmpwrite("../../out.bmp", image);
-    imshow(image);
-
-    return EXIT_SUCCESS;
+	return Scene(background, lights, renderizables);
 }
 
-void processRay(int row, int column, const Vec3 &e, const Vec3 &d) {
-	
-	for (Renderizable* renderizable : renderizables) {
+int main(int, char**){
 
-		Vec3 intersection;
-		Vec3 normal;
-		bool hit = renderizable->intersect(e, d, intersection, normal);
+	Scene scene = buildScene();
 
-		if (hit) {
-			float distance = (e - intersection).norm();
+    Camera camera = Camera(
+		Vec3(0.0f, 0.0f, -10.0f), 
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 1.0f, 0.0f),
+		10.0f,
+		300,
+		500);
 
-			if (imageDistances(row, column) > distance) {
-				
-				Colour colour = renderizable->getHitColour(lights, e, d, intersection, normal);
-				image(row, column) = colour;
+	Image image = camera.render(scene);
 
-				imageDistances(row, column) = distance;
-			}
-		}
-	}
+    bmpwrite("../../out.bmp", image);
+    OpenGP::imshow(image);
+
+    return EXIT_SUCCESS;
 }

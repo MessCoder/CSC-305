@@ -1,8 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "OpenGP/types.h"
-using namespace OpenGP;
+#include "common.h"
 
 class Light
 {

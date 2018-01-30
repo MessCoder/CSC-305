@@ -1,27 +1,28 @@
 #ifndef RENDERIZABLE_H
 #define RENDERIZABLE_H
 
-#include "OpenGP/types.h"
-using namespace OpenGP;
+#include "../common.h"
 
-#include "../material/material.h"
+#include "../ray.h"
+#include "../scene.h"
+#include "material/material.h"
 
 class Renderizable {
 public:
+	Material material;
+
 	// e = ray origin
 	// d = ray direction
 	// i = intersection
 	// n = normal
-    virtual bool intersect(const Vec3 &e, const Vec3 &d, Vec3 &i, Vec3 &n) const = 0;
+    virtual bool intersect(Ray& ray) = 0;
 	
 	// lights = all lights to process
 	// e = ray origin
 	// d = ray direction
 	// i = intersection
 	// n = normal
-	Colour getHitColour(std::vector<Light> lights, const Vec3& e, const Vec3& d, const Vec3& i, const Vec3& n) const;
-
-	Material material;
+	Colour getHitColour(Scene& scene, Ray& ray) const;
 
 	Renderizable(Material material);
 };

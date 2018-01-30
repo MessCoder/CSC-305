@@ -1,8 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "OpenGp/types.h"
-using namespace OpenGP;
+#include "common.h"
+
+#include "scene.h"
+#include "ray.h"
 
 class Camera
 {
@@ -11,26 +13,30 @@ public:
     Vec3 w; 
     Vec3 v; 
     Vec3 u; 
-    float d; 
+    float d;
 
 	// e = position
 	// w = Forward vector
 	// v = Upwards vector
-	// u = Rightwards vector
 	// d = Focal distance
-    Camera(Vec3 e = Vec3(0.0f, 0.0f, -10.0f), // e = -d*w; This will place the pixel grid on the (x = 0, y = 0) plane for convenience
-           Vec3 w = Vec3(0.0f, 0.0f, 1.0f),
-           Vec3 v = Vec3(0.0f, 1.0f, 0.0f),
-           float d = 10.0f,
-           int wResolution = 800,
-           int hResolution = 600);
+	Camera(
+		Vec3 e = Vec3(0.0f, 0.0f, -10.0f), // e = -d*w; This will place the pixel grid on the (x = 0, y = 0) plane for convenience
+		Vec3 w = Vec3(0.0f, 0.0f, 1.0f),
+		Vec3 v = Vec3(0.0f, 1.0f, 0.0f),
+		float d = 10.0f,
+		int hResolution = 600,
+		int wResolution = 800
+	);
 
-    // Call process(row, column, rayOrigin, rayDirection) for a series of rays covering the pixel grid
-    void forEachRay(void (*process)(int row, int column, const Vec3 &e, const Vec3 &d));
+	// Updates the image of the camera by casting rays through each pixel and finding the color corresponding
+	// to them in function of hits with objects and shading.
+	Image& render(Scene& scene);
+
+	// Change the camera's resolution
+	void setResolution(int hResolution, int wResolution);
 
 private:
-    int wResolution;
-    int hResolution;
+	Image image;
     float aspectRatio;
     float left;
     float right;

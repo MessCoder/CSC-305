@@ -5,7 +5,7 @@
 
 class Plane : public Renderizable {
 public:
-	virtual bool intersect(const Vec3 &e, const Vec3 &d, Vec3 &intersection, Vec3 &normal) const;
+	virtual bool intersect(Ray& ray);
 
 	Vec3 normal;
 	float distToOrigin;

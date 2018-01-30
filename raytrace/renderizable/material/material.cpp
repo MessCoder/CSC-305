@@ -1,17 +1,20 @@
 #include "material.h"
+#include "../../ray.h"
+#include "../../scene.h"
 
 Material::Material(Colour colour)
 {
 	this->colour = colour;
 }
 
-Colour Material::getHitColour(std::vector<Light> lights, const Vec3& e, const Vec3& d, const Vec3& i, const Vec3& n) const {
+Colour Material::getHitColour(Scene& scene, Ray& ray) const {
+	
 	Colour result = Colour(0.0f, 0.0f, 0.0f);
 
-	for (auto const light : lights) {
+	for (auto const light : scene.lights) {
 		// Obtain the light vector
-		Vec3 l = (light.pos - i).normalized();
-		float normalToLight = std::fmax(0.0f, n.dot(l));
+		Vec3 l = (light.pos - ray.intersection()).normalized();
+		float normalToLight = std::fmax(0.0f, ray.hitNormal.dot(l));
 
 		result += light.intensity * normalToLight * colour;
 	}
