@@ -7,16 +7,26 @@ Material::Material(Colour colour)
 	this->colour = colour;
 }
 
-Colour Material::getHitColour(Scene& scene, Ray& ray) const {
+Colour Material::getHitColour(Scene& scene, Ray& ray, float bias) const {
 	
 	Colour result = Colour(0.0f, 0.0f, 0.0f);
 
 	for (auto const light : scene.lights) {
 		// Obtain the light vector
-		Vec3 l = (light.pos - ray.intersection()).normalized();
-		float normalToLight = std::fmax(0.0f, ray.hitNormal.dot(l));
+		Vec3 dirToLight = (light.pos - ray.intersection()).normalized();
 
-		result += light.intensity * normalToLight * colour;
+		// Check for shadows
+		Ray rayToLight(ray.intersection(), dirToLight);
+		scene.castRay(rayToLight, bias);
+		
+		// The object is lit by the current light
+		if (!rayToLight.hit) {
+
+			// Compute the light reflection factor
+			float normalToLight = std::fmax(0.0f, ray.hitNormal.dot(dirToLight));
+
+			result += light.intensity * normalToLight * colour;
+		}
 	}
 
 	// Avoid colours out of bounds

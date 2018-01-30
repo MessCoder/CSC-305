@@ -15,7 +15,7 @@ public:
     // d = ray direction
     // i = intersection
     // n = normal
-	Colour getHitColour(Scene& scene, Ray& ray) const;
+	Colour getHitColour(Scene& scene, Ray& ray, float bias = DEFAULT_BIAS) const;
 	
 	Material(Colour colour = RED);
 };

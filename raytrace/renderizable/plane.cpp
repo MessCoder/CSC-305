@@ -6,14 +6,14 @@ Plane::Plane(Vec3 normal, float distToOrigin, Material material) : Renderizable(
 	this->distToOrigin = distToOrigin;
 }
 
-bool Plane::intersect(Ray& ray)
+bool Plane::intersect(Ray& ray, float bias)
 {
 	Vec3 pointInPlane = this->normal * distToOrigin;
 	
 	float distance = (pointInPlane - ray.origin).dot(this->normal);
 	distance /= ray.direction.dot(this->normal);
 
-	if (distance >= 0) {
+	if (distance >= bias) {
 		ray.hit = true;
 		ray.hitDistance = distance;
 		ray.hitNormal = this->normal;

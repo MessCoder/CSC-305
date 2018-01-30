@@ -10,14 +10,14 @@ Scene::Scene(
 	this->background = background;
 }
 
-Renderizable* Scene::castRay(Ray& ray) {
-	
+Renderizable* Scene::castRay(Ray& ray, float bias) {
+
 	Ray closestHit(ray.origin, ray.direction);
 	Renderizable* closestHitRenderizable = nullptr;
 
 	for (Renderizable* renderizable : this->renderizables) {
 
-		renderizable->intersect(ray);
+		renderizable->intersect(ray, bias);
 
 		if (ray.hitDistance < closestHit.hitDistance) {
 			closestHit = ray;
@@ -29,9 +29,9 @@ Renderizable* Scene::castRay(Ray& ray) {
 	return closestHitRenderizable;
 }
 
-Colour Scene::getHitColour(Ray& ray) {
-
-	Renderizable* renderizable = castRay(ray);
+Colour Scene::getHitColour(Ray& ray, float bias) {
+	
+	Renderizable* renderizable = castRay(ray, bias);
 
 	if (!ray.hit) {
 		return this->background;

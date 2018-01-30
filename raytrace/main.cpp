@@ -14,11 +14,19 @@ Scene buildScene() {
 	
 	auto renderizables = std::vector<Renderizable*>();
 	auto lights = std::vector<Light>();
+	
+	renderizables.push_back(
+		new Sphere(
+			Vec3(-3.0f, 0.0f, 25.0f),
+			2.0f,
+			Material(Vec3(0.8f, 0.8f, 0.0f))
+		)
+	);
 
 	renderizables.push_back(
 		new Sphere(
-			Vec3(0.0f, 0.0f, 20.0f),
-			2.0f,
+			Vec3(1.0f, 1.0f, 25.0f),
+			1.5f,
 			Material(Vec3(0.8f, 0.8f, 0.0f))
 		)
 	);
@@ -26,24 +34,36 @@ Scene buildScene() {
 	renderizables.push_back(
 		new Plane(
 			Vec3(0.0f, 1.0f, 0.0f),
-			-5.0f,
+			-1.0f,
 			Material(Vec3(0.0f, 0.0f, 1.0f))
 		)
 	);
 
+	/* Backwards raytracing sphere troubleshooting
+	renderizables.push_back(
+		new Sphere(
+			Vec3(0.0f, 0.0f, -12.0f),
+			2.0f,
+			Material(RED)
+		)
+	);
+	*/
+
 	lights.push_back(
 		Light(
-			Vec3(5.0f, 5.0f, 12.0f),
+			Vec3(10.0f, 4.0f, 25.0f),
 			1.0f
 		)
 	);
 
+	/*
 	lights.push_back(
 		Light(
 			Vec3(-5.0f, 5.0f, 12.0f),
 			0.4f
 		)
 	);
+	*/
 
 	return Scene(background, lights, renderizables);
 }
@@ -57,8 +77,8 @@ int main(int, char**){
 		Vec3(0.0f, 0.0f, 1.0f),
 		Vec3(0.0f, 1.0f, 0.0f),
 		10.0f,
-		300,
-		500);
+		150 * 9 / 16,
+		150);
 
 	Image image = camera.render(scene);
 

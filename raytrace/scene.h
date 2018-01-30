@@ -20,12 +20,16 @@ public:
 		std::vector<Renderizable*> renderizables = std::vector<Renderizable*>()
 	);
 
-	// Finds the closest intersection of the passed ray with an object in the scene
-	Renderizable* castRay(Ray& ray);
+	// Finds the closest intersection of the passed ray with an object in the scene.
+	//
+	// The bias parameter defines the minimum distance at which a hit will be considered.
+	Renderizable* castRay(Ray& ray, float bias = DEFAULT_BIAS);
 
 	// Finds the closest intersection of the passed ray with an object in the scene 
-	// and returns the perceived colour 
-	Colour getHitColour(Ray& ray);
+	// and returns the perceived colour.
+	//
+	// The bias parameter defines the minimum distance at which a hit will be considered.
+	Colour getHitColour(Ray& ray, float bias = DEFAULT_BIAS);
 };
 
 #include "renderizable/renderizable.h"

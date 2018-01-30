@@ -33,6 +33,10 @@ Image& Camera::render(Scene& scene) {
 
 	for (int row = 0; row < image.rows(); ++row) {
 
+		if (row % 5 == 0) {
+			std::cout << "Rendering row number: " << row << std::endl;
+		}
+
 		// Use a different vector to iterate through the row
 		Vec3 pixelPos = currentRowStart;
 		for (int column = 0; column < image.cols(); ++column) {

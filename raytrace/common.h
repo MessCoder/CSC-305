@@ -16,4 +16,6 @@ using Colour = Vec3; // RGB Value
 
 using Image = OpenGP::Image<Colour>;
 
+#define DEFAULT_BIAS 0.5f
+
 #endif // COMMON_H

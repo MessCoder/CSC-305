@@ -6,17 +6,46 @@ Sphere::Sphere(Vec3 pos, float radious, Material material) : Renderizable(materi
 	this->radious = radious;
 }
 
-bool Sphere::intersect(Ray& ray)
+bool Sphere::intersect(Ray& ray, float bias)
 {
-	Vec3 sphereToE = ray.origin - pos;
-	float dDotSphereToE = ray.direction.dot(sphereToE);
+	Vec3 originToSphere = pos - (ray.origin + ray.direction * bias);
+	float centerProjection = ray.direction.dot(originToSphere);
 
-	float disc = std::powf(dDotSphereToE, 2) - sphereToE.squaredNorm() + std::powf(radious, 2);
+	// We check the camera is not facing the opposite way (from outside the sphere)
+	float originToSphereSqrNorm = originToSphere.squaredNorm();
+	float sqrRadious = std::powf(radious, 2);
+	if (centerProjection < 0 && originToSphereSqrNorm >= sqrRadious) {
+		return false;
+	}
 
-	if (disc >= 0) {
+	// The discriminant measures two things the square of the distance 
+	// between the projection of the sphere centre on the ray.
+	//
+	// A distance = 0 will mean there is one and only one intersection.
+	// A distance > 0 will mean there are two intersections.
+	float discriminant = 
+		std::powf(centerProjection, 2) 
+		- originToSphereSqrNorm
+		+ sqrRadious;
+
+	if (discriminant >= 0) {
+
 		// The ray is hitting the sphere
 		ray.hit = true;
-		ray.hitDistance = -dDotSphereToE - std::sqrtf(disc);
+
+		// There may be two intersections and we want to pick the closest.
+		//
+		// The first option to pick would be centerProjection - sqrt(disc),
+		// but this may be negative, so we check for that.
+		float projectionToIntersection = std::sqrtf(discriminant);
+		ray.hitDistance = centerProjection - projectionToIntersection;
+
+		if (ray.hitDistance < 0) {
+			ray.hitDistance += 2 * projectionToIntersection;
+		}
+		
+		// Now there's enough information in the ray to compute the 
+		// intersection
 		ray.hitNormal = (ray.intersection() - pos) / radious;
 
 		return true;

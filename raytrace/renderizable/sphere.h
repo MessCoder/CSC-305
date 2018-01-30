@@ -5,7 +5,7 @@
 
 class Sphere : public Renderizable {
 public:
-	virtual bool intersect(Ray& ray);
+	virtual bool intersect(Ray& ray, float bias = DEFAULT_BIAS);
 
 	Vec3 pos;
 	float radious;

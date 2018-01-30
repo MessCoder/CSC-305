@@ -3,11 +3,11 @@
 Renderizable::Renderizable(Material material) : material(material) {
 }
 
-Colour Renderizable::getHitColour(Scene& scene, Ray& ray) const {
+Colour Renderizable::getHitColour(Scene& scene, Ray& ray, float bias) const {
 	
 	if (!ray.hit) {
 		throw std::invalid_argument("Can't get the hit colour of a ray that hasn't hit anything");
 	}
 
-	return material.getHitColour(scene, ray);
+	return material.getHitColour(scene, ray, bias);
 }
