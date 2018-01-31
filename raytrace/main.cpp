@@ -9,7 +9,7 @@
 #include "renderizable/sphere.h"
 #include "renderizable/plane.h"
 
-Scene buildScene() {
+Scene getSpheresScene() {
 	Colour background = WHITE;
 	
 	auto renderizables = std::vector<Renderizable*>();
@@ -25,7 +25,7 @@ Scene buildScene() {
 
 	renderizables.push_back(
 		new Sphere(
-			Vec3(1.0f, 1.0f, 25.0f),
+			Vec3(1.0f, 2.0f, 25.0f),
 			1.0f,
 			Material(Vec3(0.8f, 0.8f, 0.8f))
 		)
@@ -77,9 +77,41 @@ Scene buildScene() {
 	return Scene(background, lights, renderizables);
 }
 
+Scene getPlaneScene() {
+	Colour background = WHITE;
+
+	auto renderizables = std::vector<Renderizable*>();
+	auto lights = std::vector<Light>();
+	
+	renderizables.push_back(
+		new Plane(
+			Vec3(0.0f, 1.0f, 0.0f),
+			-1.0f,
+			Material(WHITE)
+		)
+	);
+
+	renderizables.push_back(
+		new Plane(
+			Vec3(0.0f, 0.0f, -1.0f),
+			-40.0f,
+			Material(WHITE)
+		)
+	);
+
+	lights.push_back(
+		Light(
+			Vec3(0.0f, 0.0f, 20.0f),
+			1.0f
+		)
+	);
+
+	return Scene(background, lights, renderizables);
+}
+
 int main(int, char**){
 
-	Scene scene = buildScene();
+	Scene scene = getPlaneScene();
 
     Camera camera = Camera(
 		Vec3(0.0f, 0.0f, -10.0f), 

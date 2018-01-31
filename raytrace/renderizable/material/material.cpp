@@ -16,14 +16,15 @@ Colour Material::getHitColour(Scene& scene, Ray& ray, float bias, int depth) con
 		for (auto const light : scene.lights) {
 			
 			// Obtain the light vector
-			Vec3 dirToLight = (light.pos - ray.intersection()).normalized();
+			Vec3 vecToLight = light.pos - ray.intersection();
+			Vec3 dirToLight = (vecToLight).normalized();
 
 			// Check for shadows
 			Ray rayToLight(ray.intersection(), dirToLight);
 			scene.castRay(rayToLight, bias);
 
 			// The object is lit by the current light
-			if (!rayToLight.hit) {
+			if (!rayToLight.hit || std::powf(rayToLight.hitDistance, 2) > vecToLight.squaredNorm()) {
 
 				// Compute the shading factor
 				float normalToLight = std::fmax(0.0f, ray.hitNormal.dot(dirToLight));
