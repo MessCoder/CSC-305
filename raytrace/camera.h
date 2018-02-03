@@ -9,10 +9,15 @@
 class Camera
 {
 public:
+	// Camera position
     Vec3 e; 
+	// Forward vector
     Vec3 w; 
+	// Upwards vector
     Vec3 v; 
+	// Rightwards vector
     Vec3 u; 
+	// Focal distance
     float d;
 
 	// e = position

@@ -25,6 +25,11 @@ public:
 	// The bias parameter defines the minimum distance at which a hit will be considered.
 	Renderizable* castRay(Ray& ray, float bias = DEFAULT_BIAS);
 
+	// Finds all intersections of the passed ray with objects in the scene.
+	//
+	// The bias parameter defines the minimum distance at which a hit will be considered.
+	void getRaycastHits(Ray& ray, std::vector<std::pair<Ray, Renderizable*>>& hits, float bias = DEFAULT_BIAS);
+
 	// Finds the closest intersection of the passed ray with an object in the scene 
 	// and returns the perceived colour.
 	//

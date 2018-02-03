@@ -40,14 +40,21 @@ bool Sphere::intersect(Ray& ray, float bias)
 		float projectionToIntersection = std::sqrtf(discriminant);
 		ray.hitDistance = centerProjection - projectionToIntersection;
 
+		// We're inside the sphere and the first intersection is behind the 
+		// camera
 		if (ray.hitDistance < 0) {
 			ray.hitDistance += 2 * projectionToIntersection;
+
+			// If we're inside the sphere, we must use a normal pointint into
+			// the center of the sphere
+			ray.hitNormal = (pos - ray.intersection()) / radious;
+		}
+		// We're outside the sphere
+		else {
+			// We use a normal pointint outwards
+			ray.hitNormal = (ray.intersection() - pos) / radious;
 		}
 		
-		// Now there's enough information in the ray to compute the 
-		// intersection
-		ray.hitNormal = (ray.intersection() - pos) / radious;
-
 		return true;
 	}
 	else {

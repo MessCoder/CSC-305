@@ -29,6 +29,19 @@ Renderizable* Scene::castRay(Ray& ray, float bias) {
 	return closestHitRenderizable;
 }
 
+void Scene::getRaycastHits(Ray& ray, std::vector<std::pair<Ray, Renderizable*>>& hits, float bias) {
+	
+	for (Renderizable* renderizable : this->renderizables) {
+		Ray currentRay(ray);
+		renderizable->intersect(currentRay, bias);
+
+		if (currentRay.hit) {
+			auto hit = std::pair<Ray, Renderizable*>(currentRay, renderizable);
+			hits.push_back(hit);
+		}
+	}
+}
+
 Colour Scene::getHitColour(Ray& ray, float bias, int depth) {
 	
 	Renderizable* renderizable = castRay(ray, bias);
@@ -38,6 +51,12 @@ Colour Scene::getHitColour(Ray& ray, float bias, int depth) {
 	}
 	else {
 		depth++;
-		return renderizable->getHitColour(*this, ray, depth);
+
+		if (depth > RAYTRACING_MAX_DEPTH) {
+			return background;
+		}
+		else {
+			return renderizable->getHitColour(*this, ray, bias, depth);
+		}
 	}
 }
