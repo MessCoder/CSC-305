@@ -22,39 +22,46 @@ void Camera::setResolution(int hResolution, int wResolution) {
 	this->up = 1.0f;
 }
 
-Image& Camera::render(Scene& scene) {
+Image& Camera::render(Scene& scene, int antialising) {
+
+	image.setConstant(BLACK);
+
+	// Size of the ray matrix to render taking antialising into account
+	int hRays = image.rows() * antialising;
+	int wRays = image.cols() * antialising;
+	float rayColourFactor = 1.0f / std::powf(antialising, 2);
 
 	// Place the initial position at the given focal distance
 	Vec3 currentRowStart = w * d;
 
 	// Place the initial position in the center of the first column
-	Vec3 wStep = (right - left) / float(image.cols()) * u;
+	Vec3 wStep = (right - left) / float(wRays) * u;
 	currentRowStart += left * u + 0.5f * wStep;
 
 	// Place the initial position in the center of the first row
-	Vec3 hStep = (up - bottom) / float(image.rows()) * v;
+	Vec3 hStep = (up - bottom) / float(hRays) * v;
 	currentRowStart += bottom * v + 0.5f * hStep;
 
-	for (int row = 0; row < image.rows(); ++row) {
+	for (int row = 0; row < hRays; ++row) {
 
 		if (row % 5 == 0) {
 			std::cout << "Rendering row number: " << row << std::endl;
 		}
 
 		// Use a different vector to iterate through the row
-		Vec3 pixelPos = currentRowStart;
-		for (int column = 0; column < image.cols(); ++column) {
+		Vec3 pos = currentRowStart;
+		for (int column = 0; column < wRays; ++column) {
 
-			// Build the ray associated to this pixel
-			Vec3 direction = (pixelPos).normalized();
+			// Build the ray associated to this position
+			Vec3 direction = (pos).normalized();
 			Ray ray(e, direction);
 
 			// Obtain and set the color for that ray in the current scene
 			Colour colour = scene.getHitColour(ray);
-			image(row, column) = colour;
+			image(row / antialising, column / antialising) += colour * rayColourFactor;
 
 			// Update the pixel position, move it one position right
-			pixelPos += wStep;
+			pos += wStep;
 		}
 
 		// Update the row start, move it one position up

@@ -35,7 +35,9 @@ public:
 
 	// Updates the image of the camera by casting rays through each pixel and finding the color corresponding
 	// to them in function of hits with objects and shading.
-	Image& render(Scene& scene);
+	//
+	// The antialising parameter indicates the side size of the matrix of rays cast per pixel.
+	Image& render(Scene& scene, int antialising = 1);
 
 	// Change the camera's resolution
 	void setResolution(int hResolution, int wResolution);

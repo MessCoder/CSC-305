@@ -27,18 +27,18 @@ Scene getSpheresScene() {
 	// Small right sphere
 	renderizables.push_back(
 		new Sphere(
-			Vec3(1.0f, 2.0f, 25.0f),
+			Vec3(3.0f, 2.0f, 25.0f),
 			1.0f,
 			Material(WHITE, 0.1f, 0.1f, 1.5f)
 		)
 	);
 
-	// Small close sphere (refractive)
+	// Close sphere (refractive)
 	renderizables.push_back(
 		new Sphere(
-			Vec3(0.0f, -0.5f, 20.0f),
-			0.5f,
-			Material(WHITE, 0.0f, 0.8f, 1.5f)
+			Vec3(1.2f, 0.0f, 17.0f),
+			1.0f,
+			Material(BLUE, 0.0f, 0.7f, 1.5f)
 		)
 	);
 
@@ -166,7 +166,7 @@ int main(int, char**){
 		800 * 9 / 16,
 		800);
 
-	Image image = camera.render(scene);
+	Image image = camera.render(scene, 2);
 
     bmpwrite("../../out.bmp", image);
     OpenGP::imshow(image);
