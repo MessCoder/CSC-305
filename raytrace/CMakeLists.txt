@@ -9,3 +9,4 @@ if(WIN32)
         target_link_libraries(${EXERCISENAME} "legacy_stdio_definitions.lib")
 endif()
 target_link_libraries(${EXERCISENAME} ${COMMON_LIBS})
+
