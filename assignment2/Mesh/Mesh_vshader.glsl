@@ -12,6 +12,9 @@ uniform mat4 PROJ;
 uniform int hasNormals;
 uniform int hasTextures;
 
+out vec2 uv;
+
 void main() {
+    uv = aTexCoord;
     gl_Position = PROJ * VIEW * MODEL * vec4(aPos, 1.0f);
 }

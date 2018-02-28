@@ -15,3 +15,4 @@ include(common/GLFW.cmake)
 #add_subdirectory(trianglemesh)
 add_subdirectory(transform)
 add_subdirectory(assignment2)
+
