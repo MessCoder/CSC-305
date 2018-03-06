@@ -5,7 +5,7 @@
 #include "Mesh/SphereBuilder.h"
 #include "objFile.h"
 
-int main() {
+/*int main() {
 
 	Mesh mesh;
 	
@@ -14,4 +14,4 @@ int main() {
 	SphereBuilder(100, 100).build(mesh);
 
 	ObjFile().setMesh(mesh).save("output.obj");
-}
+}*/
