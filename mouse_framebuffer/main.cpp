@@ -20,7 +20,7 @@ const char* selection_fshader =
 
 void init();
 std::unique_ptr<Shader> lineShader;
-std::unique_ptr<GPUMesh> line;
+std::unique_ptr<GPUMesh> skeleton;
 std::vector<Vec2> controlPoints;
 
 /// Selection with framebuffer pointers
@@ -65,14 +65,14 @@ int main(int, char**){
 
         // Draw line red
         lineShader->set_uniform("selection", -1);
-        line->set_attributes(*lineShader);
-        line->set_mode(GL_LINE_STRIP);
-        line->draw();
+        skeleton->set_attributes(*lineShader);
+        skeleton->set_mode(GL_LINE_STRIP);
+        skeleton->draw();
 
         // Draw points red and selected point blue
         if(selection!=nullptr) lineShader->set_uniform("selection", int(selection-&controlPoints[0]));
-        line->set_mode(GL_POINTS);
-        line->draw();
+        skeleton->set_mode(GL_POINTS);
+        skeleton->draw();
 
         lineShader->unbind();
     });
@@ -87,7 +87,7 @@ int main(int, char**){
         if( selection && (p-position).norm() > 0.0f) {
             selection->x() = position.x();
             selection->y() = position.y();
-            line->set_vbo<Vec2>("vposition", controlPoints);
+            skeleton->set_vbo<Vec2>("vposition", controlPoints);
         }
         position = p;
     });
@@ -104,9 +104,9 @@ int main(int, char**){
             glPointSize(POINTSIZE);
             selectionShader->bind();
             selectionShader->set_uniform("offsetID", offsetID);
-            line->set_attributes(*selectionShader);
-            line->set_mode(GL_POINTS);
-            line->draw();
+            skeleton->set_attributes(*selectionShader);
+            skeleton->set_mode(GL_POINTS);
+            skeleton->draw();
             selectionShader->unbind();
             glFlush();
             glFinish();
@@ -123,7 +123,7 @@ int main(int, char**){
                 selection->x() = position.x();
                 selection->y() = position.y();
                 selection = nullptr;
-                line->set_vbo<Vec2>("vposition", controlPoints);
+                skeleton->set_vbo<Vec2>("vposition", controlPoints);
             }
         }
     });
@@ -146,8 +146,8 @@ void init(){
     controlPoints.push_back(Vec2( 0.3f, 0.5f));
     controlPoints.push_back(Vec2( 0.7f, 0.0f));
 
-    line = std::unique_ptr<GPUMesh>(new GPUMesh());
-    line->set_vbo<Vec2>("vposition", controlPoints);
+    skeleton = std::unique_ptr<GPUMesh>(new GPUMesh());
+    skeleton->set_vbo<Vec2>("vposition", controlPoints);
     std::vector<unsigned int> indices = {0,1,2,3};
-    line->set_triangles(indices);
+    skeleton->set_triangles(indices);
 }
