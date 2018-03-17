@@ -10,10 +10,9 @@ typedef Eigen::Transform<float,3,Eigen::Affine> Transform;
 Mesh arrow;
 Mesh satellite;
 
-float timeScale = 0.001;
-float t = 0;
-
 Bezier arrowTrajectory;
+float lastTime = 0.;
+float period = 3;
 
 void init();
 void display();
@@ -47,22 +46,13 @@ void init(){
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	// t an interpolation value that should take say
-	// 3 seconds to cycle.
-
-	// glfwGetTime returns the time taken by the last update
-	// (which is going to be in the order of milliseconds)
-
-	// I can increment t by 1/3 * glfwGetTime 
-	t += timeScale / glfwGetTime();
-
-	if (t > 1) {
-		t = 0;
-	}
+	
 
 	// **** Arrow transform
 	Transform arrow_M = Transform::Identity();
 	
+	// Position at the correspondent length of the curve
+	float t = remainderf(glfwGetTime(), period);
 	Vec2 arrowPos = arrowTrajectory.interpolate(t);
 	arrow_M *= Eigen::Translation3f(arrowPos.x(), arrowPos.y(), 0.);
 
