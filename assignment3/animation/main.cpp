@@ -12,7 +12,6 @@ typedef Eigen::Transform<float,3,Eigen::Affine> Transform;
 
 Mesh arrow;
 Mesh satellite;
-
 Bezier arrowTrajectory;
 
 // Time taken for the arrow to go along the curve
@@ -113,21 +112,54 @@ void buildArrow() {
 	// The neutral orientation will be to the right
 	arrow.init();
 
+	// Curve defining the shape of the arrow
+	Bezier curve = Bezier(
+		Vec2(-.1, .08),
+		Vec2(.12, -.08),
+		Vec2(.12, .08),
+		Vec2(-.1, -.08)
+	);
+
+	// Amount of vertices (must be even)
+	int res = 15;
+
 	std::vector<OpenGP::Vec3> arrowVertices;
-	arrowVertices.push_back(OpenGP::Vec3(-.1, .1, 0.));
-	arrowVertices.push_back(OpenGP::Vec3(-.1, -.1, 0.));
-	arrowVertices.push_back(OpenGP::Vec3(.1, 0., 0.));
-
 	std::vector<unsigned> arrowIndexes;
-	arrowIndexes.push_back(0);
-	arrowIndexes.push_back(1);
-	arrowIndexes.push_back(2);
-
 	std::vector<OpenGP::Vec2> arrowUv;
-	arrowUv.push_back(OpenGP::Vec2(-1., 1.));
-	arrowUv.push_back(OpenGP::Vec2(-1., -1.));
-	arrowUv.push_back(OpenGP::Vec2(1., 0.));
 
+	// Add vertices and uv coordinates as points interpolated
+	// by the curve.
+	float t = 0;
+	float incr = 1. / (res - 1);
+
+	for (int i = 0; i < res; i++, t += incr) {
+
+		Vec2 point = curve.interpolate(t);
+		
+		arrowVertices.push_back(Vec3(point.x(), point.y(), 0));
+		arrowUv.push_back(point);
+	}
+
+	// Make the tris!
+	//
+	// Make rightmost tri
+	arrowIndexes.push_back(res/2 - 1);
+	arrowIndexes.push_back(res/2);
+	arrowIndexes.push_back(res/2 + 1);
+
+	// Make the rest of quads from left to right
+	for (int i = 0; i < res; i++) {
+
+		arrowIndexes.push_back(i);
+		arrowIndexes.push_back(i + 1);
+		arrowIndexes.push_back(res - i - 2);
+
+		arrowIndexes.push_back(i);
+		arrowIndexes.push_back(res - i - 2);
+		arrowIndexes.push_back(res - i - 1);
+	}
+
+	// Actually put it all together
 	arrow.loadVertices(arrowVertices, arrowIndexes);
 	arrow.loadTexCoords(arrowUv);
 }
