@@ -5,20 +5,36 @@
 #include "../common.h"
 #include "../bezier.cpp"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 typedef Eigen::Transform<float,3,Eigen::Affine> Transform;
 
 Mesh arrow;
 Mesh satellite;
 
 Bezier arrowTrajectory;
-float lastTime = 0.;
-float period = 3;
+
+// Time taken for the arrow to go along the curve
+float arrowPeriod = 3;
+
+// Time taken for the satellite to rotate around 
+// the arrow once
+float orbitingPeriod = 1;
+float orbitSize = 0.2;
+
+// Time taken for the satellite to rotate around
+// itself once
+float satelliteRotationPeriod = 10;
+
 
 void init();
 void display();
 void buildArrow();
 void buildSatellite();
 void buildArrowTrajectory();
+Transform getArrowStepTransform();
+Transform getSatelliteStepTransform();
 
 int main(int, char**){
     OpenGP::glfwInitWindowSize(512, 512);
@@ -45,22 +61,52 @@ void init(){
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
-	
-	
 
-	// **** Arrow transform
-	Transform arrow_M = Transform::Identity();
-	
-	// Position at the correspondent length of the curve
-	float t = remainderf(glfwGetTime(), period);
-	Vec2 arrowPos = arrowTrajectory.interpolate(t);
-	arrow_M *= Eigen::Translation3f(arrowPos.x(), arrowPos.y(), 0.);
-
-	// **** Satellite transform
-	Transform satellite_M = Transform::Identity();
+	Transform arrow_M = getArrowStepTransform();
+	Transform satellite_M = arrow_M * getSatelliteStepTransform();
 
 	arrow.draw(arrow_M.matrix());
 	satellite.draw(satellite_M.matrix());
+}
+
+Transform getArrowStepTransform() {
+
+	// Get position information
+	float t = fmod(glfwGetTime(), arrowPeriod) / arrowPeriod;
+	Vec2 arrowPos = arrowTrajectory.interpolate(t);
+
+	// Get rotation information
+	float angle = 0;
+	if (t < 0.99) {
+		float nextT = t + 0.01;
+		Vec2 direction = arrowTrajectory.interpolate(nextT) - arrowPos;
+		angle = atan2f(direction.y(), direction.x());
+	}
+
+	Transform arrow_M = Transform::Identity();
+	arrow_M = Eigen::AngleAxisf(angle, Vec3(0., 0., 1.)).matrix() * arrow_M;
+	arrow_M = Eigen::Translation3f(arrowPos.x(), arrowPos.y(), 0.) * arrow_M;
+
+	return arrow_M;
+}
+
+Transform getSatelliteStepTransform() {
+
+	// Get the rotation around itself
+	float localT = fmod(glfwGetTime(), satelliteRotationPeriod) / satelliteRotationPeriod;
+	float localAngle = 2 * M_PI * localT;
+
+	// Get the rotation around the arrow
+	float orbitT = fmod(glfwGetTime(), orbitingPeriod) / orbitingPeriod;
+	float orbitAngle = 2 * M_PI * orbitT;
+
+	// Build the matrix
+	Transform satellite_M = Transform::Identity();
+	satellite_M = Eigen::AngleAxisf(localAngle, Vec3(0., 0., 1.)).matrix() * satellite_M;
+	satellite_M = Eigen::Translation3f(orbitSize, 0., 0.) * satellite_M;
+	satellite_M = Eigen::AngleAxisf(orbitAngle, Vec3(0., 0., 1.)).matrix() * satellite_M;
+
+	return satellite_M;
 }
 
 void buildArrow() {
@@ -91,10 +137,10 @@ void buildSatellite() {
 	satellite.init();
 
 	std::vector<OpenGP::Vec3> quadVert;
-	quadVert.push_back(OpenGP::Vec3(-0.1f, -0.1f, 0.0f));
-	quadVert.push_back(OpenGP::Vec3(0.1f, -0.1f, 0.0f));
-	quadVert.push_back(OpenGP::Vec3(0.1f, 0.1f, 0.0f));
-	quadVert.push_back(OpenGP::Vec3(-0.1f, 0.1f, 0.0f));
+	quadVert.push_back(OpenGP::Vec3(-0.05f, -0.05f, 0.0f));
+	quadVert.push_back(OpenGP::Vec3(0.05f, -0.05f, 0.0f));
+	quadVert.push_back(OpenGP::Vec3(0.05f, 0.05f, 0.0f));
+	quadVert.push_back(OpenGP::Vec3(-0.05f, 0.05f, 0.0f));
 
 	std::vector<unsigned> quadInd;
 	quadInd.push_back(0);
@@ -130,9 +176,9 @@ void buildArrowTrajectory() {
 	// (center + 2 -> center - 2)
 	
 	arrowTrajectory = Bezier(
-		Vec2(-1.5, -.8),
+		Vec2(-1.2, -.8),
 		Vec2(2., .8),
 		Vec2(-2., .8),
-		Vec2(1.5, -.8)
+		Vec2(1.2, -.8)
 	);
 };
