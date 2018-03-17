@@ -12,6 +12,7 @@ public:
 	// c: third interpolation point; final interpolation direction from d
 	// d: end of the curve
 	Bezier(Vec2 a, Vec2 b, Vec2 c, Vec2 d);
+	Bezier();
 
 	// Get a point in the curve, located at a given portion of its length.
 	//

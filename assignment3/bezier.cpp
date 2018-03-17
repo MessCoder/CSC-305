@@ -8,6 +8,13 @@ Bezier::Bezier(Vec2 a, Vec2 b, Vec2 c, Vec2 d) {
 	this->d = d;
 };
 
+Bezier::Bezier() {
+	this->a = Vec2(1., 1.);
+	this->b = Vec2(1., 1.);
+	this->c = Vec2(1., 1.);
+	this->d = Vec2(1., 1.);
+};
+
 Vec2 Bezier::interpolate(float t) {
 	// The senseless optimization devil has hit me
 
