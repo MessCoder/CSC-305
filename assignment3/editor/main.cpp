@@ -75,7 +75,7 @@ int main(int, char**){
 
         lineShader->unbind();
     });
-    window.set_title("Mouse");
+    window.set_title("Bezier editor");
     window.set_size(width, height);
 
     // Mouse movement callback

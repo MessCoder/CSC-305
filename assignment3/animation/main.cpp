@@ -37,7 +37,7 @@ Transform getSatelliteStepTransform();
 
 int main(int, char**){
     OpenGP::glfwInitWindowSize(512, 512);
-	OpenGP::glfwMakeWindow("Planets");
+	OpenGP::glfwMakeWindow("Animation");
 	OpenGP::glfwDisplayFunc(display);
     init();
 	OpenGP::glfwMainLoop();
